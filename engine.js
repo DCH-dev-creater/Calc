@@ -25,13 +25,13 @@ window.addEventListener('load', function() {
     });
     
 
-    // Ganeral Function
+    // General Function
     buttonPanel.addEventListener('click', function(event) {
         if (!isButton(event)) {
             return; 
         }
 
-        
+
 
     })
 
