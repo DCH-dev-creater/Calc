@@ -1,47 +1,12 @@
-window.addEventListener('load', function() {
+import { init, isButton, isNotButton} from './functions.js'; 
 
-    const calculator = document.getElementById('calculator');
-    const display = document.getElementById('display');
-    const symbols = document.getElementById('symbols');
-    const memorySymbol = document.getElementById('memory-symbol');
-    const buttonPanel = document.getElementById('button-panel');
+const DOM = init();
 
-    calculator.addEventListener('mousemove', function(event) {
-        if (isButton(event)) return;
-        if (event.buttons === 1) {
-            calculator.style.left = (calculator.offsetLeft+event.movementX) + 'px';
-            calculator.style.top = (calculator.offsetTop+event.movementY) + 'px';
-        }
-    });
-
-    buttonPanel.addEventListener('mousedown', function(event) {
-        if (!isButton(event)) return;
-        event.target.classList.add('pressed');
-    });
-
-    buttonPanel.addEventListener('mouseup', function(event) {
-        if (!isButton(event)) return;
-        event.target.classList.remove('pressed');
-    });
+DOM.buttonPanel.addEventListener('click', function(event) {
     
-
-    // General Function
-    buttonPanel.addEventListener('click', function(event) {
-        if (!isButton(event)) {
-            return; 
-        }
-
-
-
-    })
-
-
-
-
-    function isButton(e) {
-        return e.target.hasAttribute('data-button');
-    }
-
-
-
+    if (isNotButton(event)) return;
+    
+    const button = event.target.getAttribute('data-button');
+    console.log(button);
+    // Add your button click handling logic here
 });
