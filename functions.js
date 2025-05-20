@@ -2,7 +2,7 @@ export function init() {
     
     const calculator = document.getElementById('calculator');
     const display = document.getElementById('display');
-    const symbols = document.getElementById('symbols');
+    const monitor = document.getElementById('monitor');
     const memorySymbol = document.getElementById('memory-symbol');
     const buttonPanel = document.getElementById('button-panel');
 
@@ -29,7 +29,7 @@ export function init() {
     return {
         calculator,
         display,
-        symbols,
+        monitor,
         memorySymbol,
         buttonPanel
     };
@@ -42,3 +42,25 @@ export function isButton(e) {
 export function isNotButton(e) {
     return !e.target.hasAttribute('data-button');
 }
+
+export function addDigit(currentValue, symbol) {
+    if (currentValue.length >= 10) {
+        return currentValue;
+    }
+
+    if (currentValue === '0' && symbol === '0') {
+        return currentValue;
+    }
+
+    if (currentValue === '0' && symbol !== '0' && symbol !== '.') {
+        return symbol;
+    }
+
+    return currentValue + symbol;
+}
+
+
+export function showToDisplay(data, display) {
+   display.innerText = data;
+}
+

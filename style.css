@@ -61,7 +61,7 @@
     border-radius: 8px;
 }
 
-#display {
+#monitor {
     position: relative;
     background-color: #c7d5cf;
     border: 2px solid #343935;
@@ -73,7 +73,7 @@
     color: #070a09;
 }
 
-#symbols {
+#display {
     font-family: 'Technology';
     font-size: 80px;
     line-height: 64px;
