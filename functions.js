@@ -45,7 +45,9 @@ export function isNotButton(e) {
 
 export function addDigit(currentValue, symbol) {
 
-    let limit = currentValue.includes('.') ? 11 : 10;
+    let limit = 10;
+    limit += currentValue.includes('.') ? 1 : 0;
+    limit += currentValue.includes('-') ? 1 : 0;
 
     if (currentValue.length >= limit) {
         return currentValue;
@@ -60,7 +62,6 @@ export function addDigit(currentValue, symbol) {
 
     return currentValue + symbol;
 }
-
 
 export function showToDisplay(data, display) {
    display.innerText = data;
