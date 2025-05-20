@@ -44,15 +44,17 @@ export function isNotButton(e) {
 }
 
 export function addDigit(currentValue, symbol) {
-    if (currentValue.length >= 10) {
+
+    let limit = currentValue.includes('.') ? 11 : 10;
+
+    if (currentValue.length >= limit) {
         return currentValue;
     }
 
-    if (currentValue === '0' && symbol === '0') {
-        return currentValue;
-    }
-
-    if (currentValue === '0' && symbol !== '0' && symbol !== '.') {
+    if (
+        (currentValue === '0' && symbol === '0') ||
+        (currentValue === '0' && symbol !== '0' && symbol !== '.')
+    ) {
         return symbol;
     }
 
