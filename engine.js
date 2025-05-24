@@ -1,4 +1,15 @@
-import { init, addDigit, isNotButton, showToDisplay} from './functions.js'; 
+import { 
+    init, 
+    addSymbol, 
+    isNotButton, 
+    showOnDisplay,
+    doOperation,
+    getButtonValue,
+    invertSignNumber,
+    clearState,
+    calculateResult,
+    debug
+} from './functions.js'; 
 
 const DOM = init();
 
@@ -6,13 +17,14 @@ var state = {
     value: 0,
     displayValue: '0',
     operator: null,
+    limitDigits: 10
 };
 
 DOM.buttonPanel.addEventListener('click', function(event) {
     
     if (isNotButton(event)) return;
     
-    const symbol = event.target.getAttribute('data-button');
+    const symbol = getButtonValue(event);
 
     switch (symbol) {
         case '1':
@@ -25,57 +37,49 @@ DOM.buttonPanel.addEventListener('click', function(event) {
         case '8':
         case '9':
         case '0':
-
-            state.displayValue = addDigit(state.displayValue, symbol);
-            showToDisplay(state.displayValue, DOM.display);
-            console.log('display: ' + state.displayValue + ' value: ' + state.value + ' operator: ' + state.operator);
+        case '.':    
+            addSymbol(state, symbol);
+            showOnDisplay(state, DOM);
             
-            return;
-
-        case 'dot':
-            if (state.displayValue.includes('.')) return;
-            state.displayValue = addDigit(state.displayValue, '.');
-            showToDisplay(state.displayValue, DOM.display);
-            return;
+            break;
 
         case 'plus_minus':
-            if (state.displayValue === '0') return;
+            invertSignNumber(state);
+            showOnDisplay(state, DOM);
 
-            if (state.displayValue.startsWith('-')) {
-                state.displayValue = state.displayValue.replace('-', '');
-            } else {
-                state.displayValue = '-' + state.displayValue;
-            }
-            showToDisplay(state.displayValue, DOM.display);
-            
-            return;
+            break;
 
         case 'ce':
         case 'on_off':
-            state.displayValue = '0';
-            state.value = 0;
-            showToDisplay(state.displayValue, DOM.display);
-            return;
+            clearState(state)
+            showOnDisplay(state, DOM);
+
+            break;
 
         case 'plus':
-            state.operator = '+';
-            state.value = Number(state.displayValue);
-            state.displayValue = '0';
-            
-            return;
+        case 'minus':
+        case 'mult':
+        case 'divide':
+            calculateResult(state);
+            showOnDisplay(state, DOM);
+            doOperation(state, symbol);
+
+            break;
+        case 'percent':
+        case 'sqrt':
+            doOperation(state, symbol);
+            showOnDisplay(state, DOM);
+
+            break;
 
         case 'equals':
-            if (state.operator === null) return;
+            calculateResult(state);
+            showOnDisplay(state, DOM);
 
-            if (state.operator === '+') {
-                state.value += Number(state.displayValue);
-            }
-
-            showToDisplay(state.value, DOM.display);
-
-            return;
+            break;
     }
 
 
+    debug(state, symbol);
 });
 

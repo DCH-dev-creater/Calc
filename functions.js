@@ -43,27 +43,146 @@ export function isNotButton(e) {
     return !e.target.hasAttribute('data-button');
 }
 
-export function addDigit(currentValue, symbol) {
+export function addSymbol(state, symbol) {
+    
+    if (symbol == '.' && state.displayValue.includes('.')) return;
 
-    let limit = 10;
-    limit += currentValue.includes('.') ? 1 : 0;
-    limit += currentValue.includes('-') ? 1 : 0;
+    let limit = state.limitDigits;
 
-    if (currentValue.length >= limit) {
-        return currentValue;
-    }
+    limit += state.displayValue.includes('.') ? 1 : 0;
+    limit += state.displayValue.includes('-') ? 1 : 0;
 
+    if (state.displayValue.length >= limit) return;
+    
     if (
-        (currentValue === '0' && symbol === '0') ||
-        (currentValue === '0' && symbol !== '0' && symbol !== '.')
+        (state.displayValue === '0' && symbol === '0') ||
+        (state.displayValue === '0' && symbol !== '0' && symbol !== '.')
     ) {
-        return symbol;
+        state.displayValue = symbol;
+        return;
     }
 
-    return currentValue + symbol;
+    state.displayValue += symbol;
 }
 
-export function showToDisplay(data, display) {
-   display.innerText = data;
+export function addSymbolToDisplay(display, symbol) {
+    if (display.innerText === '0' && symbol !== '.') {
+        display.innerText = symbol;
+    } else {
+        display.innerText += symbol;
+    }   
+    if (display.innerText.length > 10) {
+        display.innerText = display.innerText.slice(0, 10);
+    }
+    if (display.innerText.includes('.')) {
+        display.innerText = display.innerText.replace(/(\.\d{10})\d+/, '$1');
+    }
+    if (display.innerText.startsWith('0') && !display.innerText.startsWith('0.')) {
+        display.innerText = display.innerText.replace(/^0+/, '');
+    }
+    if (display.innerText === '') {
+        display.innerText = '0';
+    }
+    if (display.innerText === '-') {
+        display.innerText = '0';
+    }
 }
 
+export function showOnDisplay(state, dom) {
+   dom.display.innerText = state.displayValue;
+}
+
+export function doOperation(state, symbol) {
+    switch (symbol) {
+        case 'plus':
+            state.operator = '+';
+            state.value = state.displayValue !== '0' ? Number(state.displayValue) : state.value;
+            state.displayValue = '0';
+            break;
+        case 'minus':
+            state.operator = '-';
+            state.value = state.displayValue !== '0' ? Number(state.displayValue) : state.value;
+            state.displayValue = '0';
+            break;
+        case 'mult':
+            state.operator = '*';
+            state.value = state.displayValue !== '0' ? Number(state.displayValue) : state.value;
+            state.displayValue = '0';
+            break;
+        case 'divide':
+            state.operator = '/';
+            state.value = state.displayValue !== '0' ? Number(state.displayValue) : state.value;
+            state.displayValue = '0';
+            break;
+        case 'percent':
+            state.displayValue = String((state.value * Number(state.displayValue)) / 100);
+            return;
+        case 'sqrt':
+            if (Number(state.displayValue) < 0) {
+                state.displayValue = 'Error';
+                return;
+            }
+            let result = String(Math.sqrt(Number(state.displayValue)));
+            let limit = state.limitDigits;
+            limit += result.includes('.') ? 1 : 0;
+            limit += result.includes('-') ? 1 : 0;
+
+            if (result.length > limit) {
+                result = result.slice(0, limit);
+            }
+            state.displayValue = result;
+            return;
+    }
+}
+
+export function getButtonValue(event) {
+    return event.target.getAttribute('data-button');
+}
+
+export function clearState(state) {
+    state.value = 0;
+    state.displayValue = '0';
+    state.operator = null;
+    state.limitDigits = 10;
+}
+
+export function invertSignNumber(state) {
+    if (state.displayValue === '0') return;
+
+    if (state.displayValue.startsWith('-')) {
+        state.displayValue = state.displayValue.replace('-', '');
+    } else {
+        state.displayValue = '-' + state.displayValue;
+    }
+}
+
+export function calculateResult(state) {
+    if (state.operator === null) return;
+
+    switch (state.operator) {
+        case '+':
+            state.value += Number(state.displayValue);
+            break;
+        case '-':
+            state.value -= Number(state.displayValue);
+            break;
+        case '*':
+            state.value *= Number(state.displayValue);
+            break;
+        case '/':
+            if (Number(state.displayValue) === 0) {
+                state.displayValue = 'Error';
+                return;
+            }
+            state.value /= Number(state.displayValue);
+            break;
+    }
+
+    state.displayValue = String(state.value);
+    state.operator = null;
+}
+
+export function debug(state, symbol) {
+    console.log(`Added symbol: ${symbol}, Display: ${state.displayValue}, Value: ${state.value}, Operator: ${state.operator}`);
+    return 555;
+}
